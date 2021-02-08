@@ -1,0 +1,46 @@
+<div>
+  <div class="row">
+    <div class="col-4 col-xs-0"></div>
+    <div class="col-4 col-xs-12 my-5">
+      <mat-card class="py-5 my-5">
+        <h1 class="form-title">User Login</h1>
+        <form [formGroup]="formGroup" (ngSubmit)="onSubmit(formGroup.value)" class="form">
+          <mat-form-field class="form-element">
+            <input matInput placeholder="Emailaddress" formControlName="emailId">
+            <mat-error *ngIf="formGroup.controls.emailId.touched && formGroup.controls.emailId.errors?.required">
+              Email is Required
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.emailId.touched && formGroup.controls.emailId.errors?.pattern">
+              Please enter valid email
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="form-element">
+            <input matInput placeholder="Password" formControlName="password">
+
+            <mat-error *ngIf="formGroup.controls.password.touched && formGroup.controls.password.errors?.required">
+              Password is Required
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.password.touched && formGroup.controls.password.errors?.minlength">
+              Please enter minimum 5 characters!
+            </mat-error>
+          </mat-form-field>
+
+
+
+          <div class="form-element">
+            <button mat-raised-button color="primary" type="submit" class="button"
+              [disabled]="!formGroup.valid">Login</button>
+          </div>
+
+        </form>
+        <p *ngIf="false" class="alert alert-danger">
+          No user found
+        <p>
+        <div style="float: right;">
+          New User? <a routerLink='/register'>Register here</a>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,16 @@
+<div appJpDraggableDialog class="dialog-div">
+    <h4 mat-dialog-title class="title">Are you sure want to delete {{name}}?
+
+    </h4>
+    <div class="row dialog-actions" mat-dialog-actions>
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+            <button mat-button class="cancel-btn" (click)="onCancelClick()">CANCEL</button>
+        </div>
+        <div class="col-md-3">
+            <button mat-button class="delete-btn" cdkFocusInitial (click)="delete()">DELETE</button>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+  </div>
+  

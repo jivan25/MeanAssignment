@@ -1,0 +1,45 @@
+.title{
+    background-color: #E5E9EF;
+    color: #000000;
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 28px;
+    text-align: center;
+    height: 15%;
+    padding: 2.5% !important;
+    margin-bottom: 0%;
+}
+
+.cancel-btn{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 0.75px;
+    text-transform: uppercase;
+    color: #2F80ED;
+    padding: 7% !important;
+}
+
+
+
+.delete-btn{
+    background: #2F80ED;
+    color: #FFFFFF;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 0.75px;
+    padding: 7%;
+    /* width: 100% !important; */
+}
+
+.dialog-actions{
+    margin: 2%;
+}
