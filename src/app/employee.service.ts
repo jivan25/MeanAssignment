@@ -3,49 +3,34 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { catchError } from 'rxjs/operators'
+import { EmployeeModel } from './Employee/employeeModel';
 
 
-const httpHeaderOptions = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + localStorage.getItem('token')
-  })
-}
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmployeeService {
 
-  EMPLOYEE_MANAGE_URL=environment.employeeBaseUrl+'api/employee/'
+  GET_EMPLOYEE_URL='http://localhost:3000/data';
   constructor(private httpClient:HttpClient) { }
 
-  registerUser(body){
-      return this.httpClient.post('http://localhost:3000/api/users/',body).pipe(catchError(this.handleError));
+
+  getEmployeeDetails():Observable<EmployeeModel[]>{
+    return this.httpClient.get(this.GET_EMPLOYEE_URL).pipe(catchError(this.handleError));
   }
 
-  loginUser(body){
-    return this.httpClient.post('http://localhost:3000/api/users/login',body).pipe(catchError(this.handleError));
+  getEmployeeDetailsById(id:number):Observable<EmployeeModel>{
+    return this.httpClient.get(this.GET_EMPLOYEE_URL+'/'+id).pipe(catchError(this.handleError));
   }
 
-  createEmployee(body){
-    return this.httpClient.post(this.EMPLOYEE_MANAGE_URL,body,httpHeaderOptions).pipe(catchError(this.handleError));
+  addEmployeeDetails(body){
+    return this.httpClient.post(this.GET_EMPLOYEE_URL,body).pipe(catchError(this.handleError));
   }
 
-  getEmployeeDetails(){
-    return this.httpClient.get(this.EMPLOYEE_MANAGE_URL,httpHeaderOptions).pipe(catchError(this.handleError));
-  }
-
-  getEmployeeDetailById(id:number){
-    return this.httpClient.get(this.EMPLOYEE_MANAGE_URL+id,httpHeaderOptions).pipe(catchError(this.handleError));
-  }
-
-  updateEmployee(body){
-    return this.httpClient.put(this.EMPLOYEE_MANAGE_URL,body,httpHeaderOptions).pipe(catchError(this.handleError));
-  }
-
-  deleteEmployee(id:number){
-    return this.httpClient.delete(this.EMPLOYEE_MANAGE_URL+id,httpHeaderOptions).pipe(catchError(this.handleError));
+  updateEmployeeDetails(body,id){
+    return this.httpClient.put(this.GET_EMPLOYEE_URL+'/'+id,body).pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse): Observable<any> {

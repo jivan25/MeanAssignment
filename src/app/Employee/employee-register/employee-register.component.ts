@@ -13,20 +13,9 @@ import { EmployeeService } from 'src/app/employee.service';
 export class EmployeeRegisterComponent implements OnInit {
   formGroup: FormGroup;
   arrayOfEmployeeDetails: any[] = [];
-
-
   id: string;
-  designations = [
-    'Software Developer',
-    'Software Tester',
-    'Quality Analyst',
-    'Manager',
-    'Delivery Manager',
-    'Dilivery Director'
-  ];
+  label:string='Add';
 
-  ratingArr = [];
-  selectedProjectName: string;
   constructor(private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
@@ -39,37 +28,38 @@ export class EmployeeRegisterComponent implements OnInit {
     this.createForm();
     this.id = this.route.snapshot.paramMap.get('id')
     if (this.id != null) {
-      this.getEmployeeDetailsById(this.id)
+      this.label='Update'
+     this.getEmployeeDetailsById(this.id)
     }
   }
 
   getEmployeeDetailsById(id) {
-    this.employeeService.getEmployeeDetailById(id).subscribe((data: any) => {
-      this.formGroup.get('name').setValue(data.data.Name)
-      this.formGroup.get('emailId').setValue(data.data.EmailId)
-      this.formGroup.get('phone').setValue(data.data.Phone)
-      this.formGroup.get('designation').setValue(data.data.Designation)
-      this.formGroup.get('address').setValue(data.data.Address)
+    this.employeeService.getEmployeeDetailsById(id).subscribe((data: any) => {
+      console.log(this.formGroup)
+      this.formGroup.get('name').setValue(data.name)
+      this.formGroup.get('phone').setValue(data.phone)
+      this.formGroup.get(['address','city']).setValue(data.address.city)
+      this.formGroup.get(['address','address_line1']).setValue(data.address.address_line1)
+      this.formGroup.get(['address','address_line2']).setValue(data.address.address_line2)
+      this.formGroup.get(['address','postal_code']).setValue(data.address.postal_code)
     }, 
     (error:ErrorObserver<any>)=>{
-      if(error.toString()==='Invalid Token or Token expired'){
-        this.router.navigateByUrl('/login')
-        localStorage.removeItem('token')
-      
- }
       this.openSnackBar(error.toString(),'')
     })
   }
 
   createForm() {
-    let emailregex: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+   
     let mobileRegex: RegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/
     this.formGroup = this.formBuilder.group({
-      emailId: [null, [Validators.required, Validators.pattern(emailregex)]],
       phone: [null, [Validators.required, Validators.pattern(mobileRegex)]],
       name: [null, Validators.required],
-      designation: [null, Validators.required],
-      address: [null, Validators.required],
+      address:  this.formBuilder.group({
+        city:[null, Validators.required],
+        address_line1: [null, Validators.required],
+        address_line2: [null, Validators.required],
+        postal_code:[null, Validators.required],
+      }),
     });
   }
 
@@ -78,36 +68,20 @@ export class EmployeeRegisterComponent implements OnInit {
   }
 
   onSubmit(formData) {
+
+    console.log(formData)
     if (this.id != null) {
-      formData={
-        ...formData,
-        empId:parseInt(this.id)
-      }
-      this.employeeService.updateEmployee(formData).subscribe((data) => {
+      this.employeeService.updateEmployeeDetails(formData,parseInt(this.id)).subscribe((data)=>{
         this.openSnackBar('Employee has updated successfully','')
         this.router.navigateByUrl('/employeeList')
-      }, 
-      (error:ErrorObserver<any>)=>{
-        if(error.toString()==='Invalid Token or Token expired'){
-          this.router.navigateByUrl('/login')
-          localStorage.removeItem('token')
-        
-   }
-        this.openSnackBar(error.toString(),'')
       })
+
     } else {
-        this.employeeService.createEmployee(formData).subscribe((data)=>{
-          this.openSnackBar('Employee has registered successfully','')
-          this.router.navigateByUrl('/employeeList')
-        },
-        (error:ErrorObserver<any>)=>{
-          if(error.toString()==='Invalid Token or Token expired'){
-            this.router.navigateByUrl('/login')
-            localStorage.removeItem('token')
-        
-     }
-          this.openSnackBar(error.toString(),'')
-        })
+      this.employeeService.addEmployeeDetails(formData).subscribe((data)=>{
+        this.openSnackBar('Employee has registered successfully','')
+        this.router.navigateByUrl('/employeeList')
+      })
+
     }
   }
   openSnackBar(message: string, action: string) {

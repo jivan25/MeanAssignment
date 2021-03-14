@@ -1,10 +1,14 @@
-<app-header></app-header>
 <p style="margin-top: 60px;"></p>
 <div class="row">
   <div class="col-1"></div>
   <div class="col-10">
+    <div class="row"><h1><strong>Employee List</strong></h1></div>
     <div class="row employee-lable-row">
-      <div class="col-9"><h1>Employee List</h1></div>
+      <div class="col-9">
+        <mat-form-field class="table-search">
+          <input matInput #value placeholder="Search" (keyup)='searchValue(value.value)'>
+        </mat-form-field>
+      </div>
       <div class="col-3">
         <button (click)="addEmployee()" mat-button class="add-new-btn">
          ADD NEW Employee
@@ -12,59 +16,62 @@
       </div>
     </div>
 
-    <div class="employee-not-found alert alert-danger" *ngIf='emptyEmployeeList;else showTable'>
+    <div class="employee-not-found alert alert-danger" *ngIf='dataSource.length==0;else showTable'>
       No Employee Found
     </div>
     <ng-template #showTable>
-    <table mat-table [dataSource]="dataSource" style="width: 100%;" class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" style="width: 100%;"  class="mat-elevation-z8">
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell class="table-header" *matHeaderCellDef >  ID </th>
+        <td mat-cell class="table-data" *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
 
       <ng-container matColumnDef="name">
-        <th mat-header-cell class="table-header" *matHeaderCellDef>  Name </th>
-        <td mat-cell class="table-data" *matCellDef="let element"> {{element.Name}} </td>
+        <th mat-header-cell class="table-header" *matHeaderCellDef >  Name </th>
+        <td mat-cell class="table-data" *matCellDef="let element"> {{element.name}} </td>
       </ng-container>
 
-      <ng-container matColumnDef="email">
-        <th mat-header-cell class="table-header" *matHeaderCellDef> EmailId </th>
+     
+      <ng-container class="table-header" matColumnDef="phone">
+        <th mat-header-cell class="table-header" *matHeaderCellDef >Phone </th>
         <td mat-cell class="table-data" *matCellDef="let element">
-         {{element.EmailId}}
+        <ng-container *ngIf="isNumber(element.phone);else showNA">
+          {{element.phone}} 
+     
+        </ng-container>  
+        <ng-template #showNA>
+          NA
+        </ng-template>
+      </td>
+      </ng-container>
+
+      <ng-container matColumnDef="city">
+        <th mat-header-cell class="table-header" *matHeaderCellDef > City </th>
+        <td mat-cell class="table-data" *matCellDef="let element">
+         {{element.address.city}}
         </td>
       </ng-container>
-      <ng-container class="table-header" matColumnDef="phone">
-        <th mat-header-cell class="table-header" *matHeaderCellDef> Mobile No </th>
-        <td mat-cell class="table-data" *matCellDef="let element"> {{element.Phone}} </td>
+      <ng-container class="table-header" matColumnDef="address1">
+        <th mat-header-cell class="table-header" *matHeaderCellDef > Address1</th>
+        <td mat-cell class="table-data" *matCellDef="let element"> {{element.address.address_line1}} </td>
       </ng-container>
-      <ng-container class="table-header" matColumnDef="address">
-        <th mat-header-cell class="table-header" *matHeaderCellDef> Address</th>
-        <td mat-cell class="table-data" *matCellDef="let element"> {{element.Address}} </td>
+      <ng-container class="table-header" matColumnDef="address2">
+        <th mat-header-cell class="table-header" *matHeaderCellDef > Address2</th>
+        <td mat-cell class="table-data" *matCellDef="let element"> {{element.address.address_line2}} </td>
       </ng-container>
-      <ng-container class="table-header" matColumnDef="designation">
-        <th mat-header-cell class="table-header" *matHeaderCellDef> Designation</th>
-        <td mat-cell class="table-data" *matCellDef="let element"> {{element.Designation}} </td>
+      <ng-container class="table-header" matColumnDef="postal">
+        <th mat-header-cell class="table-header" *matHeaderCellDef > Postal Code</th>
+        <td mat-cell class="table-data" *matCellDef="let element"> {{element.address.postal_code}} </td>
       </ng-container>
        <ng-container matColumnDef="update">
-        <th mat-header-cell *matHeaderCellDef> Update </th>
+        <th mat-header-cell *matHeaderCellDef> EDIT </th>
         <td mat-cell class="table-data" *matCellDef="let element">
           <span>
-            <svg (click)="editEmployee(element.employeeId)" width="20" height="20" viewBox="0 0 20 20" fill="none" style="cursor: pointer;"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M10.5 7.7H7.7V10.5H6.3V7.7H3.5V6.3H6.3V3.5H7.7V6.3H10.5V7.7ZM7 0C6.08075 0 5.17049 0.18106 4.32122 0.532843C3.47194 0.884626 2.70026 1.40024 2.05025 2.05025C0.737498 3.36301 0 5.14348 0 7C0 8.85651 0.737498 10.637 2.05025 11.9497C2.70026 12.5998 3.47194 13.1154 4.32122 13.4672C5.17049 13.8189 6.08075 14 7 14C8.85651 14 10.637 13.2625 11.9497 11.9497C13.2625 10.637 14 8.85651 14 7C14 6.08075 13.8189 5.17049 13.4672 4.32122C13.1154 3.47194 12.5998 2.70026 11.9497 2.05025C11.2997 1.40024 10.5281 0.884626 9.67878 0.532843C8.8295 0.18106 7.91925 0 7 0Z"
-                fill="#1C4E8E" />
-            </svg>
-
+            <button (click)="editEmployee(element.id)" mat-button class="edit-btn">
+              EDIT
+              </button>
           </span>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef> Delete </th>
-        <td mat-cell class="table-data" *matCellDef="let element"> <span></span>
-          <svg (click)="deleteConfirmation(element.employeeId,element.Name)" width="20" height="20" viewBox="0 0 20 20" fill="none" style="cursor: pointer;"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M9.99997 0C4.47497 0 -3.05176e-05 4.475 -3.05176e-05 10C-3.05176e-05 15.525 4.47497 20 9.99997 20C15.525 20 20 15.525 20 10C20 4.475 15.525 0 9.99997 0ZM15 11H4.99997V9H15V11Z"
-              fill="#EE0202" />
-          </svg>
-
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
